@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <img src="https://i.imgur.com/bnE03Bf.jpeg" alt="Brain Gym Logo" style="width: 100px; height: auto; margin-bottom: 15px;"> -->
+
+    <title>Brain Gym Abacus Classes - Summer Camp Attendance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600&family=Lobster+Two&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: linear-gradient(135deg, #fdfcfb, #e2d1c3);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        .camp-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .camp-header h1 {
+            font-family: 'Lobster Two', cursive;
+            color: #ff6b6b;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+        .camp-header p {
+            font-size: 1.1rem;
+            color: #555;
+            font-weight: 500;
+        }
+        .form-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .form-group input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 30px;
+            border: 1px solid #ccc;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-add {
+            background: linear-gradient(45deg, #ff6b6b, #ff4757);
+            color: #fff;
+        }
+        .btn-save {
+            background: linear-gradient(45deg, #2ed573, #1eae60);
+            color: #fff;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            text-align: center;
+        }
+        table th, table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        table th {
+            background: #103741;
+            color: #fff;
+        }
+        .msg {
+            padding: 10px;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="camp-header">
+            <h1>Brain Gym Abacus Classes</h1>
+            <p>Summer Camp Attendance (19 Mar - 31 Mar)</p>
+        </div>
+
+        <?php if (!empty($message)): ?>
+            <div class="msg"><?= $message; ?></div>
+        <?php endif; ?>
+
+        <div class="form-group">
+            <input type="text" id="studentName" placeholder="Enter Student Name">
+            <button class="btn btn-add" onclick="addStudent()">Add Student</button>
+        </div>
+
+        <form method="POST">
+            <div id="attendanceTable"></div>
+            <button type="submit" class="btn btn-save">Save Attendance</button>
+        </form>
+    </div>
+
+    <script>
+        const students = [];
+        const campDates = [];
+        const tableContainer = document.getElementById('attendanceTable');
+
+        // Generate dates from March 19 to March 31
+        (function generateCampDates() {
+            const start = new Date(new Date().getFullYear(), 2, 19);
+            const end = new Date(new Date().getFullYear(), 2, 31);
+            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                campDates.push(new Date(d));
+            }
+        })();
+
+        function addStudent() {
+            const nameInput = document.getElementById('studentName');
+            const name = nameInput.value.trim();
+            if (name && !students.includes(name)) {
+                students.push(name);
+                nameInput.value = '';
+                renderTable();
+            } else {
+                alert("Enter a unique student name.");
+            }
+        }
+
+        function renderTable() {
+            if (students.length === 0) return;
+
+            let table = '<table><thead><tr><th>Student Name</th>';
+            campDates.forEach(date => {
+                table += `<th>${date.getDate()} Mar</th>`;
+            });
+            table += '</tr></thead><tbody>';
+
+            students.forEach((student, idx) => {
+                table += `<tr><td><strong>${student}</strong></td>`;
+                campDates.forEach(date => {
+                    table += `<td>
+                        <select name="attendance[${idx}][${date.getDate()}]" required>
+                            <option value="Select">⚪</option>
+                            <option value="P">🟢</option>
+                            <option value="A">🔴</option>
+                        </select>
+                    </td>`;
+                });
+                table += `</tr>`;
+            });
+            table += '</tbody></table>';
+            tableContainer.innerHTML = table;
+        }
+    </script>
+</body>
+
+</html>
